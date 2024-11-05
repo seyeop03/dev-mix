@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Objects;
 
 
-
 @RestController
 @RequestMapping("/api/v1/boards")
 @Slf4j
@@ -54,7 +53,6 @@ public class BoardController {
         return ResponseEntity.ok().body(boardService.getBoards(pageNumber, pageSize).stream()
                 .map(BoardListResponse::from)
                 .toList());
-
     }
 
 

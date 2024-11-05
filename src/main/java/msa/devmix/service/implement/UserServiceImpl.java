@@ -98,14 +98,14 @@ public class UserServiceImpl implements UserService {
         user.setAdditionalUserInfo(dto, profileImageUrl);
 
         //2. 유저의 포지션들 저장
-        List<UserPosition> userPositions = positionRepository.findByPositionNameIn(dto.getPositionNames())
+        List<UserPosition> userPositions = positionRepository.findByPositionNameIn(dto.getPositions())
                 .stream()
                 .map(position -> UserPosition.of(user, position))
                 .toList();
         userPositionRepository.saveAll(userPositions);
 
         //3. 유저의 기술 스택들 저장
-        List<String> techStackList = dto.getTechStackDtos()
+        List<String> techStackList = dto.getTechStacks()
                 .stream()
                 .map(TechStackDto::getTechStackName)
                 .toList();
