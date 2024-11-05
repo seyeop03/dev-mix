@@ -8,6 +8,7 @@ import msa.devmix.config.oauth.userinfo.UserPrincipal;
 import msa.devmix.domain.board.Board;
 import msa.devmix.dto.*;
 import msa.devmix.dto.request.*;
+import msa.devmix.dto.response.BoardListResponse;
 import msa.devmix.dto.response.BoardWithPositionTechStackResponse;
 import msa.devmix.dto.response.CommentResponse;
 import msa.devmix.dto.response.ResponseDto;
@@ -52,13 +53,16 @@ public class BoardController {
                 .body(ResponseDto.success(BoardWithPositionTechStackResponse.from(boardService.getBoard(boardId))));
     }
 
-    //특정 페이지 게시글 리스트 조회
+//    특정 페이지 게시글 리스트 조회
     @GetMapping
-    public ResponseEntity<?> boards(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<?> boards(@RequestParam(defaultValue = "1") int pageNumber, @RequestParam(defaultValue = "16") int pageSize) {
 
-        boardService.getBoards(pageable);
-        return null;
+        return ResponseEntity.ok().body(boardService.getBoards(pageNumber, pageSize).stream()
+                .map(BoardListResponse::from)
+                .toList());
+
     }
+
 
     //게시글 생성
     @PostMapping
