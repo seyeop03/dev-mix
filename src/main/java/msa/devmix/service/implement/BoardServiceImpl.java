@@ -9,6 +9,9 @@ import msa.devmix.domain.constant.NotificationType;
 import msa.devmix.domain.constant.RecruitmentStatus;
 import msa.devmix.domain.user.User;
 import msa.devmix.dto.*;
+import msa.devmix.dto.response.BoardListResponseTest;
+import msa.devmix.dto.response.BoardPositionListResponseTest;
+import msa.devmix.dto.response.BoardTechStackListResponseTest;
 import msa.devmix.exception.CustomException;
 import msa.devmix.exception.ErrorCode;
 import msa.devmix.repository.*;
@@ -24,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -332,6 +336,52 @@ public class BoardServiceImpl implements BoardService {
         }
 
         commentRepository.delete(comment);
+    }
+
+
+    @Override
+    public List<BoardListResponseTest> findAllBoards(Pageable pageable) {
+
+        Page<Board> boards = boardRepository.findAll(pageable);
+
+        List<Long> boardIds = boards.stream()
+                .map(Board::getId)
+                .toList();
+
+        List<BoardPosition> boardPositions = boardIds.stream()
+                .map(boardId -> boardPositionRepository.findById(boardId)
+                        .orElseThrow(() -> new CustomException(ErrorCode.POSITION_NOT_FOUND)))
+                .toList();
+
+        List<BoardTechStack> boardTechStacks = boardIds.stream()
+                .map(boardId -> boardTechStackRepository.findById(boardId)
+                        .orElseThrow(() -> new CustomException(ErrorCode.TECH_STACK_NOT_FOUND)))
+                .toList();
+
+        List<BoardListResponseTest> boardListResponseTests = boards.stream()
+                .map(board -> BoardListResponseTest.of(
+                        board.getId(),
+                        board.getTitle(),
+                        board.getCreatedBy(),
+                        board.getViewCount(),
+                        board.getCommentCount(),
+                        board.getRecruitEndDate()))
+                .toList();
+
+        Map<Long, List<BoardPositionListResponseTest>> boardPositionMap = BoardPositionListResponseTest.from(boardPositions)
+                .stream()
+                .collect(Collectors.groupingBy(BoardPositionListResponseTest::getBoardId));
+
+        Map<Long, List<BoardTechStackListResponseTest>> boardTechStackMap = BoardTechStackListResponseTest.from(boardTechStacks)
+                .stream().collect(Collectors.groupingBy(BoardTechStackListResponseTest::getBoardId));
+
+        boardListResponseTests.forEach(boardListResponseTest ->
+                boardListResponseTest.setPositions(boardPositionMap.get(boardListResponseTest.getBoardId())));
+
+        boardListResponseTests.forEach(boardListResponseTest ->
+                boardListResponseTest.setTechStacks(boardTechStackMap.get(boardListResponseTest.getBoardId())));
+
+        return boardListResponseTests;
     }
 
 }
