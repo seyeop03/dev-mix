@@ -6,10 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import msa.devmix.domain.common.BaseTimeEntity;
-import msa.devmix.domain.constant.Location;
 import msa.devmix.domain.constant.Role;
-import msa.devmix.dto.UserDto;
 import msa.devmix.dto.UserWithPositionTechStackDto;
 
 

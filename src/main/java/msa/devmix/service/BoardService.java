@@ -3,8 +3,6 @@ package msa.devmix.service;
 import msa.devmix.domain.user.User;
 import msa.devmix.dto.*;
 import msa.devmix.repository.query.BoardQueryDto;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 

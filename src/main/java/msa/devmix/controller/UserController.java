@@ -80,9 +80,8 @@ public class UserController {
             throw new CustomException(ErrorCode.TECH_STACK_NOT_FOUND);
         }
 
-        /**
-         * User 프로필 설정 + User 기술 스택 설정 + User 포지션 설정
-         */
+
+        //User 프로필 설정 + (User 기술 스택 설정 + User 포지션 설정)
         userService.saveUserProfile(userProfileRequest.toDto(userPrincipal.getUser()), profileImage);
         return ResponseEntity.ok()
                 .body(ResponseDto.success());

@@ -6,7 +6,6 @@ import msa.devmix.domain.board.Board;
 import msa.devmix.domain.constant.Location;
 import msa.devmix.domain.constant.RecruitmentStatus;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data

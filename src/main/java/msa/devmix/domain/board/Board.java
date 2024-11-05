@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import msa.devmix.domain.common.BaseEntity;
-import msa.devmix.domain.common.BaseTimeEntity;
 import msa.devmix.domain.constant.Location;
 import msa.devmix.domain.constant.RecruitmentStatus;
 import msa.devmix.domain.user.User;

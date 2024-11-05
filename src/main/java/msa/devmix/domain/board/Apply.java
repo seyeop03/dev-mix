@@ -1,6 +1,5 @@
 package msa.devmix.domain.board;
 
-import com.nimbusds.oauth2.sdk.dpop.DPoPUtils;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

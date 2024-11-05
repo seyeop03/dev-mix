@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import msa.devmix.domain.common.Position;
 import msa.devmix.domain.common.TechStack;
 
 

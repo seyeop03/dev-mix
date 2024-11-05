@@ -1,7 +1,5 @@
 package msa.devmix.exception;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter

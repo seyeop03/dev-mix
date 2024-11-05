@@ -6,8 +6,6 @@ import msa.devmix.domain.constant.Location;
 import msa.devmix.domain.constant.RecruitmentStatus;
 import msa.devmix.dto.UserBoardsDto;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Data

@@ -1,7 +1,6 @@
 package msa.devmix.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import msa.devmix.domain.board.Board;
 import msa.devmix.domain.board.BoardTechStack;

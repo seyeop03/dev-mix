@@ -14,7 +14,6 @@ public class PostCommentRequest {
     @NotBlank
     private String content;
 
-
     public CommentDto toDto(Long boardId, User user, String content) {
         return CommentDto.of(boardId, user, content);
     }

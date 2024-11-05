@@ -61,7 +61,7 @@ public class JwtProvider {
 
     //토큰으로 Authentication 가져와서 시큐리티 컨텍스트에 설정
     public Authentication getAuthentication(String token) {
-        Claims claims = getClaims(token); //클레임 정보 가져옴
+        Claims claims = getClaims(token); //클레임 정보 조회
         Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
 
         //우리가 만든 User 가 아니라, 스프링 시큐리티에서 제공하는 User 객체 사용
@@ -72,9 +72,9 @@ public class JwtProvider {
         );
     }
 
-    //3-2. 토큰 기반으로 유저 ID를 가져오는 메서드
+    //토큰 기반으로 유저 ID를 가져오는 메서드
     public Long getUserId(String token) {
-        Claims claims = getClaims(token); //클레임 정보 가져옴
+        Claims claims = getClaims(token); //클레임 정보 조회
         return claims.get("id", Long.class); //클레임에서 id 키로 저장된 값을 반환
     }
 

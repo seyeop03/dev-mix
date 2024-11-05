@@ -10,12 +10,10 @@ import lombok.Data;
 import msa.devmix.domain.constant.Location;
 import msa.devmix.domain.constant.RecruitmentStatus;
 import msa.devmix.dto.BoardDto;
-import msa.devmix.dto.BoardTechStackDto;
 import msa.devmix.dto.UserDto;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Data
