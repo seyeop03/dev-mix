@@ -1,6 +1,5 @@
 package msa.devmix.dto.response;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import msa.devmix.domain.url.ShortUrl;

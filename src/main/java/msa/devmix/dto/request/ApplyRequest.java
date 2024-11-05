@@ -6,7 +6,6 @@ import lombok.Getter;
 import msa.devmix.domain.constant.ParticipationStatus;
 import msa.devmix.domain.user.User;
 import msa.devmix.dto.ApplyDto;
-import msa.devmix.dto.BoardPositionDto;
 
 @Getter
 @AllArgsConstructor

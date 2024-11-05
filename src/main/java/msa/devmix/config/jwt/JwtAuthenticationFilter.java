@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (CustomException e) {
-            //인증이 필요하지 않은 엔드포인트에 대해서..
+            //인증이 필요하지 않은 엔드포인트
             log.info("Filter validation failed! {}", e.getMessage());
         }
 

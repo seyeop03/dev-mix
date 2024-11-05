@@ -6,10 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import msa.devmix.domain.common.BaseTimeEntity;
-import msa.devmix.domain.constant.Location;
 import msa.devmix.domain.constant.Role;
-import msa.devmix.dto.UserDto;
 import msa.devmix.dto.UserWithPositionTechStackDto;
 
 
@@ -66,11 +63,12 @@ public class User {
         return new User(id, username, nickname, email, groupName, profileImage);
     }
 
-    public void updateUser(UserWithPositionTechStackDto dto, String profileImageUrl) {
+    public void setAdditionalUserInfo(UserWithPositionTechStackDto dto, String profileImageUrl) {
         this.nickname = dto.getNickname();
         this.email = dto.getEmail();
         this.groupName = dto.getGroupName();
         this.location = dto.getLocation();
         this.profileImage = profileImageUrl;
+        this.role = Role.ROLE_USER;
     }
 }

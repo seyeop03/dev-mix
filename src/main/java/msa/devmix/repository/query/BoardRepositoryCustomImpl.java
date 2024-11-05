@@ -12,16 +12,6 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
 
     private final EntityManager em;
 
-    @Override
-    public List<BoardQueryDto> findBoardWithUserQueryDtos() {
-        return List.of();
-    }
-
-    @Override
-    public List<BoardQueryDto> findBoardByUserQueryDtos(List<BoardQueryDto> result) {
-        return List.of();
-    }
-
     // Board 조회
     @Override
     public List<BoardQueryDto> findBoards(int pageNumber, int pageSize) {

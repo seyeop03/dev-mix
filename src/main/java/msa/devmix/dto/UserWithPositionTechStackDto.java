@@ -22,11 +22,11 @@ public class UserWithPositionTechStackDto {
     private String groupName;
     private String location;
 
-    private List<String> positionNames;
-    private List<TechStackDto> techStackDtos;
+    private List<String> positions;
+    private List<TechStackDto> techStacks;
 
     //조회용
-    public static UserWithPositionTechStackDto of(User user, List<String> positionNames, List<TechStackDto> techStackDtos) {
+    public static UserWithPositionTechStackDto of(User user, List<String> positions, List<TechStackDto> techStacks) {
         return new UserWithPositionTechStackDto(
                 user.getId(),
                 user.getNickname(),
@@ -34,8 +34,8 @@ public class UserWithPositionTechStackDto {
                 user.getProfileImage(),
                 user.getGroupName(),
                 user.getLocation(),
-                positionNames,
-                techStackDtos
+                positions,
+                techStacks
         );
     }
 
@@ -45,8 +45,8 @@ public class UserWithPositionTechStackDto {
                                                   String email,
                                                   String groupName,
                                                   String location,
-                                                  List<String> positionNames,
-                                                  List<TechStackDto> techStackDtos) {
+                                                  List<String> positions,
+                                                  List<TechStackDto> techStacks) {
         return new UserWithPositionTechStackDto(
                 user.getId(),
                 nickname,
@@ -54,8 +54,8 @@ public class UserWithPositionTechStackDto {
                 null,
                 groupName,
                 location,
-                positionNames,
-                techStackDtos
+                positions,
+                techStacks
         );
     }
 }

@@ -3,7 +3,6 @@ package msa.devmix.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import msa.devmix.domain.constant.Location;
 import msa.devmix.domain.constant.Role;
 import msa.devmix.domain.user.User;
 

@@ -12,7 +12,6 @@ import msa.devmix.dto.request.*;
 import msa.devmix.dto.response.*;
 import msa.devmix.exception.CustomException;
 import msa.devmix.exception.ErrorCode;
-import msa.devmix.repository.BoardPositionRepository;
 import msa.devmix.repository.BoardRepository;
 import msa.devmix.service.ApplyService;
 import msa.devmix.service.BoardService;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.Objects;
 
 
-
 @RestController
 @RequestMapping("/api/v1/boards")
 @Slf4j
@@ -43,6 +41,7 @@ public class BoardController {
     private final PositionService positionService;
     private final TechStackService techStackService;
 
+
     /**
      * 게시글 기능
      */
@@ -50,19 +49,17 @@ public class BoardController {
     @GetMapping("/{board-id}")
     public ResponseEntity<?> board(@PathVariable("board-id") @Min(1) Long boardId) {
 
-        // 제목, 내용, 게시글 번호(ID), 모집상태, 조회수, 북마크 해간놈 list, 진행방식(지역), 기술스택 dto, 진행기간, 시작일, 모집마감일, 포지션 dto, 작성자정보 dto, BaseTimeEntity, 댓글(따로)
         return ResponseEntity.ok()
                 .body(ResponseDto.success(BoardWithPositionTechStackResponse.from(boardService.getBoard(boardId))));
     }
 
-//    특정 페이지 게시글 리스트 조회
+    //특정 페이지 게시글 리스트 조회
     @GetMapping
     public ResponseEntity<?> boards(@RequestParam(defaultValue = "1") int pageNumber, @RequestParam(defaultValue = "16") int pageSize) {
 
         return ResponseEntity.ok().body(boardService.getBoards(pageNumber, pageSize).stream()
                 .map(BoardListResponse::from)
                 .toList());
-
     }
 
     // 특정 페이지 게시글 리스트 조회(Test)
@@ -163,10 +160,12 @@ public class BoardController {
     public ResponseEntity<?> postComment(@PathVariable("board-id") @Min(1) Long boardId,
                                          @Valid @RequestBody PostCommentRequest postCommentRequest,
                                          @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        boardService.saveComment(postCommentRequest.toDto(
-                boardId,
-                userPrincipal.getUser(),
-                postCommentRequest.getContent())
+        boardService.saveComment(
+                postCommentRequest.toDto(
+                        boardId,
+                        userPrincipal.getUser(),
+                        postCommentRequest.getContent()
+                )
         );
 
         return ResponseEntity.ok()
@@ -183,7 +182,6 @@ public class BoardController {
         return ResponseEntity.ok()
                 .body(ResponseDto.success());
     }
-
 
     /**
      * 스크랩 기능

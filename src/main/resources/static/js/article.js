@@ -116,13 +116,24 @@ fetch('/api/v1/users', {
     .then(data => {
         const userInfoDiv = document.getElementById('user-info');
         userInfoDiv.textContent = `
-      아이디: ${data.username}
-      이메일: ${data.email}
-      닉네임: ${data.email}
-      소속: ${data.groupName}
-      프로필 이미지: ${data.profileImage}
-      권한: ${data.role}
+      아이디: ${data.result.username}
+      이메일: ${data.result.email}
+      닉네임: ${data.result.nickname}
+      소속: ${data.result.groupName}
+      지역: ${data.result.location}
+      프로필 이미지: ${data.result.profileImage}
+      권한: ${data.result.role}
     `;
+        if (data.result.profileImage) {
+            const profileImage = document.createElement('img');
+            profileImage.src = data.result.profileImage;
+            profileImage.alt = `${data.result.username}님의 프로필 이미지`;
+            profileImage.style.width = '100px'; // 이미지 크기 조정
+            profileImage.style.height = '100px';
+
+            userInfoDiv.appendChild(profileImage);
+        }
+
         userInfoDiv.style.whiteSpace = 'pre-wrap';
     })
     .catch(error => {

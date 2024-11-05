@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PositionRepository extends JpaRepository<Position, Long> {
+
     Optional<Position> findByPositionName(String positionName);
 
     List<Position> findByPositionNameIn(List<String> positionNames);
-
-    boolean existsByPositionNameIn(List<String> positionList);
 }

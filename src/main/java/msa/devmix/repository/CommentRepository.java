@@ -12,8 +12,6 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    Page<Comment> findByUserId(Long userId, Pageable pageable);
-
     @Query(
             "SELECT c" +
             " FROM Comment AS c" +
@@ -22,8 +20,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             " ORDER BY c.createdAt DESC"
     )
     List<Comment> findByBoardId(@Param("boardId") Long boardId);
-
-    void deleteByBoardId(Long boardId);
 
     void deleteAllByBoardId(Long boardId);
 }
