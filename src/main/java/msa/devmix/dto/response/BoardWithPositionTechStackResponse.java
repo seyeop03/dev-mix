@@ -27,7 +27,6 @@ public class BoardWithPositionTechStackResponse {
     private String recruitmentStatus;
     private Long viewCount;
     private Long projectPeriod;
-    private LocalDate startDate;
     private LocalDate endDate;
     private String nickname;
     private String username;
@@ -53,7 +52,6 @@ public class BoardWithPositionTechStackResponse {
                 dto.getRecruitmentStatus().name(),
                 dto.getViewCount(),
                 dto.getProjectPeriod(),
-                dto.getStartDate(),
                 dto.getEndDate(),
                 dto.getUserDto().getNickname(),
                 dto.getUserDto().getUsername(),
@@ -72,7 +70,6 @@ public class BoardWithPositionTechStackResponse {
                                                         String recruitmentStatus,
                                                         Long viewCount,
                                                         Long projectPeriod,
-                                                        LocalDate startDate,
                                                         LocalDate endDate,
                                                         String nickname,
                                                         String username,
@@ -93,7 +90,6 @@ public class BoardWithPositionTechStackResponse {
                 recruitmentStatus,
                 viewCount,
                 projectPeriod,
-                startDate,
                 endDate,
                 nickname,
                 username,
@@ -112,7 +108,6 @@ public class BoardWithPositionTechStackResponse {
 //    private boolean scrap;
 //    private LocationV1 location;
 //    private Long projectPeriod;
-//    private LocalDateTime startDate;
 //    private LocalDateTime endDate;
 //    private String userNickname;
 //    private String username;

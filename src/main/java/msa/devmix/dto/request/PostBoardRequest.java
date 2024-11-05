@@ -36,10 +36,6 @@ public class PostBoardRequest {
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate startDate; //프로젝트 시작일
-
-    @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate recruitEndDate; //모집 마감일
 
     private List<BoardTechStackRequest> boardTechStackList;
@@ -54,7 +50,6 @@ public class PostBoardRequest {
                 Location.valueOf(location),
                 imageUrl,
                 projectPeriod,
-                startDate,
                 recruitEndDate
         );
     }

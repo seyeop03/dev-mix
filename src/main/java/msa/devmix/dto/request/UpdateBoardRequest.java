@@ -32,9 +32,7 @@ public class UpdateBoardRequest {
 
     @NotNull
     private Long projectPeriod; //프로젝트 진행기간
-    @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate startDate; //프로젝트 시작일
+
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate recruitEndDate; //모집 마감일
@@ -58,7 +56,6 @@ public class UpdateBoardRequest {
                 Location.valueOf(location),
                 imageUrl,
                 projectPeriod,
-                startDate,
                 recruitEndDate,
                 RecruitmentStatus.valueOf(recruitmentStatus));
     }
