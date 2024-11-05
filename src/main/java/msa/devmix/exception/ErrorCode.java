@@ -26,6 +26,7 @@ public enum ErrorCode {
     POSITION_NOT_FOUND(HttpStatus.NOT_FOUND,"Position not founded"),
     POSITION_NOT_MATCH(HttpStatus.NOT_FOUND,"Position not matched."),
     POSITION_FULL(HttpStatus.FORBIDDEN, "Position full."),
+    LOCATION_NOT_FOUND(HttpStatus.FORBIDDEN, "Location not found."),
 
     SHORT_URL_NOT_FOUND(HttpStatus.NOT_FOUND,"Short url not founded."),
 

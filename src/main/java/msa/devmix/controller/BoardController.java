@@ -6,17 +6,21 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import msa.devmix.config.oauth.userinfo.UserPrincipal;
 import msa.devmix.domain.board.Board;
+import msa.devmix.domain.constant.Location;
 import msa.devmix.dto.*;
 import msa.devmix.dto.request.*;
-import msa.devmix.dto.response.BoardListResponse;
-import msa.devmix.dto.response.BoardWithPositionTechStackResponse;
-import msa.devmix.dto.response.CommentResponse;
-import msa.devmix.dto.response.ResponseDto;
+import msa.devmix.dto.response.*;
 import msa.devmix.exception.CustomException;
 import msa.devmix.exception.ErrorCode;
+import msa.devmix.repository.BoardPositionRepository;
 import msa.devmix.repository.BoardRepository;
 import msa.devmix.service.ApplyService;
 import msa.devmix.service.BoardService;
+import msa.devmix.service.PositionService;
+import msa.devmix.service.TechStackService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +38,9 @@ public class BoardController {
     private final BoardService boardService;
     private final BoardRepository boardRepository;
     private final ApplyService applyService;
+    private final BoardPositionRepository boardPositionRepository;
+    private final PositionService positionService;
+    private final TechStackService techStackService;
 
     /**
      * 게시글 기능
@@ -53,6 +60,12 @@ public class BoardController {
         return ResponseEntity.ok().body(boardService.getBoards(pageNumber, pageSize).stream()
                 .map(BoardListResponse::from)
                 .toList());
+    }
+
+    // 특정 페이지 게시글 리스트 조회(Test)
+    @GetMapping
+    public ResponseEntity<?> boards(@PageableDefault Pageable pageable) {
+        return ResponseEntity.ok().body(ResponseDto.success(boardService.findAllBoards(pageable)));
     }
 
 
@@ -203,5 +216,25 @@ public class BoardController {
 //    //프로젝트 작성자의 지원 승인 및 거절
 //    @GetMapping("/{board-id}/apply")
 //    public ResponseEntity<?>
+
+    /**
+     *
+     */
+    @GetMapping("/techstacks")
+    public ResponseEntity<?> techstacks() {
+
+        return ResponseEntity.ok().body(ResponseDto.success(TechStackResponse.from(techStackService.getTechStacks())));
+    }
+
+    @GetMapping("/positions")
+    public ResponseEntity<?> positions() {
+
+        return ResponseEntity.ok().body(ResponseDto.success(PositionResponse.from(positionService.getPositions())));
+    }
+
+    @GetMapping("/locations")
+    public ResponseEntity<?> locations() {
+        return ResponseEntity.ok().body(Location.getAllLocations());
+    }
 
 }

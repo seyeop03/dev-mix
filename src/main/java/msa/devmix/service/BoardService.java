@@ -2,6 +2,7 @@ package msa.devmix.service;
 
 import msa.devmix.domain.user.User;
 import msa.devmix.dto.*;
+import msa.devmix.dto.response.BoardListResponseTest;
 import msa.devmix.repository.query.BoardQueryDto;
 
 import java.util.List;
@@ -18,4 +19,7 @@ public interface BoardService {
     List<CommentDto> getComments(Long boardId);
     void saveComment(CommentDto commentDto);
     void deleteComment(Long boardId, Long commentId, User user);
+
+
+    List<BoardListResponseTest> findAllBoards(Pageable pageable);
 }
