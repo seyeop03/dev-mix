@@ -31,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
@@ -104,6 +105,10 @@ public class UserController {
     public ResponseEntity<?> getUserBoards(@PathVariable("user-id") @Min(1) Long userId,
                                            @PageableDefault Pageable pageable,
                                            @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        if (!Objects.equals(userPrincipal.getUser().getId(), userId)) {
+            throw new CustomException(ErrorCode.AUTHORIZATION_FAILED);
+        }
 
         return ResponseEntity.ok()
                 .body(ResponseDto.success(

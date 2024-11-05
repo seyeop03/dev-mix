@@ -12,6 +12,9 @@ import msa.devmix.dto.*;
 import msa.devmix.exception.CustomException;
 import msa.devmix.exception.ErrorCode;
 import msa.devmix.repository.*;
+import msa.devmix.repository.query.BoardPositionQueryDto;
+import msa.devmix.repository.query.BoardQueryDto;
+import msa.devmix.repository.query.BoardTechStackQueryDto;
 import msa.devmix.service.BoardService;
 import msa.devmix.service.NotificationService;
 import org.springframework.data.domain.Page;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -236,11 +240,28 @@ public class BoardServiceImpl implements BoardService {
 
     //게시글 리스트 조회
     @Override
-    public Page<BoardDto> getBoards(Pageable pageable) {
-        Page<Board> boardPage = boardRepository.findAll(pageable);
+    @Transactional
+    public List<BoardQueryDto> getBoards(int pageNumber, int pageSize) {
 
+        // board 조회
+        List<BoardQueryDto> boards = boardRepository.findBoards(pageNumber, pageSize);
 
-        return null;
+        // boardIds 가져오기
+        List<Long> boardIds = boards.stream().map(BoardQueryDto::getBoardId)
+                .toList();
+
+        // boardPosition 가져오기
+        Map<Long, List<BoardPositionQueryDto>> boardPositionQueryDtos = boardRepository.findBoardPositionQueryDtos(boardIds);
+
+        boards.forEach(board -> board.setPositions(boardPositionQueryDtos.get(board.getBoardId())));
+
+        // boardTechStack 가져오기
+        Map<Long, List<BoardTechStackQueryDto>> boardTechStackQueryDtos = boardRepository.findBoardTechStackQueryDtos(boardIds);
+
+        boards.forEach(board -> board.setTechStacks(boardTechStackQueryDtos.get(board.getBoardId())));
+
+        return boards;
+
     }
 
     //게시글 조회수 증가
