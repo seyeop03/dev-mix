@@ -66,11 +66,12 @@ public class User {
         return new User(id, username, nickname, email, groupName, profileImage);
     }
 
-    public void updateUser(UserWithPositionTechStackDto dto, String profileImageUrl) {
+    public void setAdditionalUserInfo(UserWithPositionTechStackDto dto, String profileImageUrl) {
         this.nickname = dto.getNickname();
         this.email = dto.getEmail();
         this.groupName = dto.getGroupName();
         this.location = dto.getLocation();
         this.profileImage = profileImageUrl;
+        this.role = Role.ROLE_USER;
     }
 }

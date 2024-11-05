@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import msa.devmix.config.oauth.userinfo.UserPrincipal;
+import msa.devmix.domain.common.Position;
+import msa.devmix.domain.common.TechStack;
 import msa.devmix.dto.UserDto;
 import msa.devmix.dto.request.CheckNicknameRequest;
 import msa.devmix.dto.request.UserProfileRequest;
@@ -15,22 +17,17 @@ import msa.devmix.exception.CustomException;
 import msa.devmix.exception.ErrorCode;
 import msa.devmix.repository.PositionRepository;
 import msa.devmix.repository.TechStackRepository;
-import msa.devmix.service.FileService;
 import msa.devmix.service.UserService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -56,7 +53,6 @@ public class UserController {
     /**
      * 사용자 상세 프로필 조회
      */
-    //todo: !custom preauthorized
     @GetMapping("/{user-id}")
     public ResponseEntity<?> getUser(@PathVariable("user-id") Long userId) {
         return ResponseEntity.ok()
@@ -71,12 +67,16 @@ public class UserController {
                                          @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
                                          @AuthenticationPrincipal UserPrincipal userPrincipal) throws IOException {
         //positionList 검증
-        if (!positionRepository.existsByPositionNameIn(userProfileRequest.getPositionList())) {
+        List<String> positionList = userProfileRequest.getPositionList();
+        List<Position> positions = positionRepository.findByPositionNameIn(userProfileRequest.getPositionList());
+        if (positionList != null && positions.size() != positionList.size()) {
             throw new CustomException(ErrorCode.POSITION_NOT_FOUND);
         }
 
         //techStackList 검증
-        if (!techStackRepository.existsByTechStackNameIn(userProfileRequest.getTechStackList())) {
+        List<String> techStackList = userProfileRequest.getTechStackList();
+        List<TechStack> techStacks = techStackRepository.findByTechStackNameIn(userProfileRequest.getTechStackList());
+        if (techStackList != null && techStacks.size() != techStackList.size()) {
             throw new CustomException(ErrorCode.TECH_STACK_NOT_FOUND);
         }
 

@@ -95,8 +95,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         String profileImageUrl = fileService.uploadFile(profileImage);
-        user.updateUser(dto, profileImageUrl);
-        //todo: Role.ROLE_USER 변경 필요
+        user.setAdditionalUserInfo(dto, profileImageUrl);
 
         //2. 유저의 포지션들 저장
         List<UserPosition> userPositions = positionRepository.findByPositionNameIn(dto.getPositionNames())
