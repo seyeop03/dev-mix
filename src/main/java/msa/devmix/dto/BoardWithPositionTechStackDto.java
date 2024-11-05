@@ -21,7 +21,6 @@ public class BoardWithPositionTechStackDto {
     private RecruitmentStatus recruitmentStatus;
     private Long viewCount;
     private Long projectPeriod;
-    private LocalDate startDate;
     private LocalDate endDate;
     private UserDto userDto;
     private LocalDateTime createdAt;
@@ -41,7 +40,6 @@ public class BoardWithPositionTechStackDto {
                 boardDto.getRecruitmentStatus(),
                 boardDto.getViewCount(),
                 boardDto.getProjectPeriod(),
-                boardDto.getStartDate(),
                 boardDto.getRecruitEndDate(),
                 boardDto.getUserDto(),
                 boardDto.getCreatedAt(),

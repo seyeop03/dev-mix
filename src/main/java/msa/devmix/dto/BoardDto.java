@@ -26,7 +26,6 @@ public class BoardDto {
     private String imageUrl;
     private Long viewCount; //조회수
     private Long projectPeriod; //프로젝트 진행기간
-    private LocalDate startDate; //프로젝트 시작일
     private LocalDate recruitEndDate;
     private RecruitmentStatus recruitmentStatus;
     private LocalDateTime createdAt; //게시글 생성일자
@@ -39,7 +38,6 @@ public class BoardDto {
             Location location,
             String imageUrl,
             Long projectPeriod,
-            LocalDate startDate,
             LocalDate recruitEndDate,
             RecruitmentStatus recruitmentStatus) {
         return new BoardDto(
@@ -51,7 +49,6 @@ public class BoardDto {
                 imageUrl,
                 null,
                 projectPeriod,
-                startDate,
                 recruitEndDate,
                 recruitmentStatus,
                 null,
@@ -69,7 +66,6 @@ public class BoardDto {
                 board.getRecruitmentStatus(),
                 board.getViewCount(),
                 board.getProjectPeriod(),
-                board.getStartDate(),
                 board.getRecruitEndDate(),
                 board.getCreatedAt(),
                 board.getLastModifiedAt()
@@ -85,7 +81,6 @@ public class BoardDto {
                               RecruitmentStatus recruitmentStatus,
                               Long viewCount,
                               Long projectPeriod,
-                              LocalDate startDate,
                               LocalDate recruitEndDate,
                               LocalDateTime createdAt,
                               LocalDateTime lastModifiedAt) {
@@ -98,7 +93,6 @@ public class BoardDto {
                 imageUrl,
                 viewCount,
                 projectPeriod,
-                startDate,
                 recruitEndDate,
                 recruitmentStatus,
                 createdAt,
@@ -111,7 +105,6 @@ public class BoardDto {
                               Location location,
                               String imageUrl,
                               Long projectPeriod,
-                              LocalDate startDate,
                               LocalDate recruitEndDate
                               ) {
         return new BoardDto(
@@ -123,7 +116,6 @@ public class BoardDto {
                 imageUrl,
                 null,
                 projectPeriod,
-                startDate,
                 recruitEndDate,
                 null,
                 null,
@@ -137,7 +129,6 @@ public class BoardDto {
                 imageUrl,
                 location,
                 projectPeriod,
-                startDate,
                 recruitEndDate);
     }
 

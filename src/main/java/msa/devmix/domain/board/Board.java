@@ -35,7 +35,6 @@ public class Board extends BaseEntity {
     private Location location;
 
     private Long projectPeriod; //프로젝트 진행기간
-    private LocalDate startDate; //프로젝트 시작일
     private LocalDate recruitEndDate; //모집 마감일
 
     @Enumerated(EnumType.STRING)
@@ -54,7 +53,6 @@ public class Board extends BaseEntity {
                  String imageUrl,
                  Location location,
                  Long projectPeriod,
-                 LocalDate startDate,
                  LocalDate recruitEndDate
     ) {
         return new Board(
@@ -65,7 +63,6 @@ public class Board extends BaseEntity {
                 imageUrl,
                 location,
                 projectPeriod,
-                startDate,
                 recruitEndDate,
                 null,
                 null,
@@ -78,7 +75,6 @@ public class Board extends BaseEntity {
                            String imageUrl,
                            Location location,
                            Long projectPeriod,
-                           LocalDate startDate,
                            LocalDate recruitEndDate,
                            RecruitmentStatus recruitmentStatus) {
         return new Board(
@@ -89,7 +85,6 @@ public class Board extends BaseEntity {
                 imageUrl,
                 location,
                 projectPeriod,
-                startDate,
                 recruitEndDate,
                 recruitmentStatus,
                 null,
@@ -104,7 +99,6 @@ public class Board extends BaseEntity {
              this.imageUrl = boardDto.getImageUrl();
              this.location = boardDto.getLocation();
              this.projectPeriod = boardDto.getProjectPeriod();
-             this.startDate = boardDto.getStartDate();
              this.recruitEndDate = boardDto.getRecruitEndDate();
              this.recruitmentStatus = boardDto.getRecruitmentStatus();
     }
