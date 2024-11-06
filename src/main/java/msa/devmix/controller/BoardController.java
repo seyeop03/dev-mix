@@ -17,6 +17,8 @@ import msa.devmix.service.ApplyService;
 import msa.devmix.service.BoardService;
 import msa.devmix.service.PositionService;
 import msa.devmix.service.TechStackService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +57,12 @@ public class BoardController {
         return ResponseEntity.ok().body(boardService.getBoards(pageNumber, pageSize).stream()
                 .map(BoardListResponse::from)
                 .toList());
+    }
+
+    // 특정 페이지 게시글 리스트 조회(Test)
+    @GetMapping
+    public ResponseEntity<?> boards(@PageableDefault Pageable pageable) {
+        return ResponseEntity.ok().body(ResponseDto.success(boardService.findAllBoards(pageable)));
     }
 
 

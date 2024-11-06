@@ -2,6 +2,7 @@ package msa.devmix.dto.response;
 
 
 import lombok.Data;
+import msa.devmix.domain.constant.Location;
 import msa.devmix.repository.query.BoardPositionQueryDto;
 import msa.devmix.repository.query.BoardQueryDto;
 import msa.devmix.repository.query.BoardTechStackQueryDto;
@@ -18,6 +19,7 @@ public class BoardListResponse {
     private Long viewCount;
     private Long commentCount;
     private LocalDate recruitEndDate;
+    private String location;
 
     private List<BoardPositionListResponse> positions;
     private List<BoardTechStackListResponse> techStacks;
@@ -29,6 +31,7 @@ public class BoardListResponse {
             Long viewCount,
             Long commentCount,
             LocalDate recruitEndDate,
+            String location,
             List<BoardPositionListResponse> positions,
             List<BoardTechStackListResponse> techStacks) {
         this.boardId = boardId;
@@ -37,6 +40,7 @@ public class BoardListResponse {
         this.viewCount = viewCount;
         this.commentCount = commentCount;
         this.recruitEndDate = recruitEndDate;
+        this.location = location;
         this.positions = positions;
         this.techStacks = techStacks;
     }
@@ -48,12 +52,14 @@ public class BoardListResponse {
             Long viewCount,
             Long commentCount,
             LocalDate recruitEndDate,
+            String location,
             List<BoardPositionListResponse> positions,
             List<BoardTechStackListResponse> techStacks) {
-        return new BoardListResponse(boardId, title, createdBy, viewCount, commentCount, recruitEndDate, positions, techStacks);
+        return new BoardListResponse(boardId, title, createdBy, viewCount, commentCount, recruitEndDate,location, positions, techStacks);
     }
 
     public static BoardListResponse from(BoardQueryDto boardQueryDto) {
+        String location = boardQueryDto.getLocation().toString();
         return BoardListResponse.of(
                 boardQueryDto.getBoardId(),
                 boardQueryDto.getTitle(),
@@ -61,6 +67,7 @@ public class BoardListResponse {
                 boardQueryDto.getViewCount(),
                 boardQueryDto.getCommentCount(),
                 boardQueryDto.getRecruitEndDate(),
+                Location.getLocation(location),
                 BoardPositionListResponse.from(boardQueryDto.getPositions()),
                 BoardTechStackListResponse.from(boardQueryDto.getTechStacks()));
     }

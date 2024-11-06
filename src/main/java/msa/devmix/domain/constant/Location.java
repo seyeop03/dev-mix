@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 @Getter
 public enum Location {
 
+    ONLINE("온라인"),
     SEOUL("서울"),
     GYEONGGI("경기"),
     INCHEON("인천"),
@@ -41,5 +42,8 @@ public enum Location {
                 .orElseThrow(() -> new CustomException(ErrorCode.LOCATION_NOT_FOUND));
     }
 
+    public static String getLocation(String location) {
+        return Location.valueOf(location).getLocation();
+    }
 
 }
