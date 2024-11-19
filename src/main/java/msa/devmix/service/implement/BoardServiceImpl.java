@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import msa.devmix.domain.board.*;
 import msa.devmix.domain.common.Position;
 import msa.devmix.domain.common.TechStack;
+import msa.devmix.domain.constant.Location;
 import msa.devmix.domain.constant.NotificationType;
 import msa.devmix.domain.constant.RecruitmentStatus;
 import msa.devmix.domain.user.User;
@@ -25,6 +26,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,15 +55,10 @@ public class BoardServiceImpl implements BoardService {
      */
     //게시글 단건 조회
     @Override
-    @Transactional
     public BoardWithPositionTechStackDto getBoard(Long boardId) {
 
         BoardDto boardDto = boardRepository
                 .findById(boardId)
-                .map(board -> {
-                    board.increaseViewCount();
-                    return board;
-                })
                 .map(BoardDto::from)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND, String.format("boardId: %d", boardId)));
 
@@ -93,12 +91,7 @@ public class BoardServiceImpl implements BoardService {
 
         boardRepository.save(board);
 
-        /**
-         * todo: 기술 스택명, 포지션에 대한 검증 로직 + boardxxxDto.toEntity()
-         * todo: 최대 인원수 검증 필요
-         */
-
-        // boardPosition save
+        // boardPosition 저장
         List<String> positionNames = boardPositionDtos.stream()
                 .map(BoardPositionDto::getPositionName)
                         .toList();
@@ -124,7 +117,7 @@ public class BoardServiceImpl implements BoardService {
                 .forEach(boardPositionRepository::save);
 
 
-        // boardTechStack save
+        // boardTechStack 저장
         List<String> techStackNames = boardTechStackDtos.stream()
                 .map(BoardTechStackDto::getTechStackName)
                 .toList();
@@ -156,7 +149,7 @@ public class BoardServiceImpl implements BoardService {
 
         board.update(boardDto);
 
-        // boardPosition update
+        // boardPosition 수정
         // 현재 게시판의 기존 `BoardPosition` 엔티티 목록 가져오기
         List<BoardPosition> existingBoardPositions = boardPositionRepository.findByBoardId(boardId);
 
@@ -189,8 +182,8 @@ public class BoardServiceImpl implements BoardService {
 
 
 
-        // boardTechStack update
-        // 현재 게시판의 기존 'BoardTechStack' 엔티티 목록 가져오기
+        // boardTechStack 업데이트
+        // 현재 게시판의 기존 `BoardTechStack` 엔티티 목록 가져오기
         List<BoardTechStack> existingBoardTechStack = boardTechStackRepository.findByBoardId(boardId);
 
         for (BoardTechStackDto dto : boardTechStackDtos) {
@@ -265,18 +258,18 @@ public class BoardServiceImpl implements BoardService {
         boards.forEach(board -> board.setTechStacks(boardTechStackQueryDtos.get(board.getBoardId())));
 
         return boards;
-
     }
 
     //게시글 조회수 증가
-//게시글을 조회할 때마다 조회수 증가 로직이 함께 실행되면 그 두 기능이 강하게 결합되므로,
-//조회수 증가를 독립된 API 로 분리하면 유지보수성이 높아짐
+    /* 게시글을 조회할 때마다 조회수 증가 로직이 함께 실행되면 그 두 기능이 강하게 결합되므로,
+        조회수 증가를 독립된 API 로 분리하면 유지보수성이 높아짐 */
     @Transactional
     @Override
     public void increaseViewCount(Long boardId) {
          Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
-         board.increaseViewCount(); //Dirty checking
+//         board.increaseViewCount(); //Dirty checking
+        boardRepository.increaseViewCount(boardId); //bulk insert
     }
 
 
@@ -315,6 +308,7 @@ public class BoardServiceImpl implements BoardService {
         Board board = boardRepository.findById(dto.getBoardId())
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
         commentRepository.save(dto.toEntity(board, dto.getUser()));
+        board.increaseCommentCount();
 
         notificationService.send(
             board.getUser(),
@@ -336,27 +330,27 @@ public class BoardServiceImpl implements BoardService {
         }
 
         commentRepository.delete(comment);
+        board.decreaseCommentCount();
     }
-
 
     @Override
     public List<BoardListResponseTest> findAllBoards(Pageable pageable) {
-
         Page<Board> boards = boardRepository.findAll(pageable);
 
         List<Long> boardIds = boards.stream()
                 .map(Board::getId)
                 .toList();
 
-        List<BoardPosition> boardPositions = boardIds.stream()
-                .map(boardId -> boardPositionRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomException(ErrorCode.POSITION_NOT_FOUND)))
-                .toList();
 
-        List<BoardTechStack> boardTechStacks = boardIds.stream()
-                .map(boardId -> boardTechStackRepository.findById(boardId)
-                        .orElseThrow(() -> new CustomException(ErrorCode.TECH_STACK_NOT_FOUND)))
-                .toList();
+//        List<BoardPosition> boardPositions = boardIds.stream()
+//                .map(boardId -> boardPositionRepository.findById(boardId)
+//                        .orElseThrow(() -> new CustomException(ErrorCode.BOARD_POSITION_NOT_FOUND)))
+//                .toList();
+//
+//        List<BoardTechStack> boardTechStacks = boardIds.stream()
+//                .map(boardId -> boardTechStackRepository.findById(boardId)
+//                        .orElseThrow(() -> new CustomException(ErrorCode.TECH_STACK_NOT_FOUND)))
+//                .toList();
 
         List<BoardListResponseTest> boardListResponseTests = boards.stream()
                 .map(board -> BoardListResponseTest.of(
@@ -365,15 +359,21 @@ public class BoardServiceImpl implements BoardService {
                         board.getCreatedBy(),
                         board.getViewCount(),
                         board.getCommentCount(),
-                        board.getRecruitEndDate()))
+                        board.getRecruitEndDate(),
+                        board.getLocation().toString()))
                 .toList();
 
-        Map<Long, List<BoardPositionListResponseTest>> boardPositionMap = BoardPositionListResponseTest.from(boardPositions)
-                .stream()
+//        Map<Long, List<BoardPositionListResponseTest>> boardPositionMap = BoardPositionListResponseTest.from(boardPositions)
+//                .stream()
+//                .collect(Collectors.groupingBy(BoardPositionListResponseTest::getBoardId));
+
+        Map<Long, List<BoardPositionListResponseTest>> boardPositionMap = boardIds.stream()
+                .flatMap(boardId -> BoardPositionListResponseTest.from(boardPositionRepository.findByBoardId(boardId)).stream())
                 .collect(Collectors.groupingBy(BoardPositionListResponseTest::getBoardId));
 
-        Map<Long, List<BoardTechStackListResponseTest>> boardTechStackMap = BoardTechStackListResponseTest.from(boardTechStacks)
-                .stream().collect(Collectors.groupingBy(BoardTechStackListResponseTest::getBoardId));
+        Map<Long, List<BoardTechStackListResponseTest>> boardTechStackMap = boardIds.stream()
+                .flatMap(boardId -> BoardTechStackListResponseTest.from(boardTechStackRepository.findByBoardId(boardId)).stream())
+                .collect(Collectors.groupingBy(BoardTechStackListResponseTest::getBoardId));
 
         boardListResponseTests.forEach(boardListResponseTest ->
                 boardListResponseTest.setPositions(boardPositionMap.get(boardListResponseTest.getBoardId())));
@@ -381,7 +381,67 @@ public class BoardServiceImpl implements BoardService {
         boardListResponseTests.forEach(boardListResponseTest ->
                 boardListResponseTest.setTechStacks(boardTechStackMap.get(boardListResponseTest.getBoardId())));
 
+//        Map<Long, List<BoardTechStackListResponseTest>> boardTechStackMap = BoardTechStackListResponseTest.from(boardTechStacks)
+//                .stream().collect(Collectors.groupingBy(BoardTechStackListResponseTest::getBoardId));
+
+//        boardListResponseTests.forEach(boardListResponseTest ->
+//                boardListResponseTest.setPositions(boardPositionMap.get(boardListResponseTest.getBoardId())));
+
+//        boardListResponseTests.forEach(boardListResponseTest ->
+//                boardListResponseTest.setTechStacks(boardTechStackMap.get(boardListResponseTest.getBoardId())));
+
         return boardListResponseTests;
     }
+
+//    @Override
+//    public List<BoardListResponseTest> findAllBoards(Pageable pageable) {
+//
+//        Page<Board> boards = boardRepository.findAll(pageable);
+//
+//        List<Long> boardIds = boards.stream()
+//                .map(Board::getId)
+//                .toList();
+//
+//        /**
+//         * boardPosition
+//         */
+//        List<BoardPosition> boardPositions = boardIds.stream()
+//                .map(boardId -> boardPositionRepository.findById(boardId)
+//                        .orElseThrow(() -> new CustomException(ErrorCode.POSITION_NOT_FOUND)))
+//                .toList();
+//
+//        List<BoardTechStack> boardTechStacks = boardIds.stream()
+//                .map(boardId -> boardTechStackRepository.findById(boardId)
+//                        .orElseThrow(() -> new CustomException(ErrorCode.TECH_STACK_NOT_FOUND)))
+//                .toList();
+//
+//        List<BoardListResponseTest> boardListResponseTests = boards.stream()
+//                .map(board -> BoardListResponseTest.of(
+//                        board.getId(),
+//                        board.getTitle(),
+//                        board.getCreatedBy(),
+//                        board.getViewCount(),
+//                        board.getCommentCount(),
+//                        board.getRecruitEndDate(),
+//                        board.getLocation().toString()))
+//                .toList();
+//
+//        Map<Long, List<BoardPositionListResponseTest>> boardPositionMap = BoardPositionListResponseTest.from(boardPositions)
+//                .stream()
+//                .collect(Collectors.groupingBy(BoardPositionListResponseTest::getBoardId));
+//
+//        Map<Long, List<BoardTechStackListResponseTest>> boardTechStackMap = BoardTechStackListResponseTest.from(boardTechStacks)
+//                .stream().collect(Collectors.groupingBy(BoardTechStackListResponseTest::getBoardId));
+//
+//        boardListResponseTests.forEach(boardListResponseTest ->
+//                boardListResponseTest.setPositions(boardPositionMap.get(boardListResponseTest.getBoardId())));
+//
+//        boardListResponseTests.forEach(boardListResponseTest ->
+//                boardListResponseTest.setTechStacks(boardTechStackMap.get(boardListResponseTest.getBoardId())));
+//
+//        return boardListResponseTests;
+//    }
+
+
 
 }

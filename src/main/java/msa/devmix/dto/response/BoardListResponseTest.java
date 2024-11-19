@@ -2,6 +2,7 @@ package msa.devmix.dto.response;
 
 import lombok.Data;
 import lombok.Setter;
+import msa.devmix.domain.constant.Location;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,8 +16,8 @@ public class BoardListResponseTest {
     private Long viewCount;
     private Long commentCount;
     private LocalDate recruitEndDate;
+    private String location;
 
-    @Setter
     private List<BoardPositionListResponseTest> positions;
     private List<BoardTechStackListResponseTest> techStacks;
 
@@ -27,6 +28,7 @@ public class BoardListResponseTest {
             Long viewCount,
             Long commentCount,
             LocalDate recruitEndDate,
+            String location,
             List<BoardPositionListResponseTest> positions,
             List<BoardTechStackListResponseTest> techStacks) {
         this.boardId = boardId;
@@ -35,6 +37,7 @@ public class BoardListResponseTest {
         this.viewCount = viewCount;
         this.commentCount = commentCount;
         this.recruitEndDate = recruitEndDate;
+        this.location = Location.valueOf(location).getLocation();
         this.positions = positions;
         this.techStacks = techStacks;
     }
@@ -47,6 +50,7 @@ public class BoardListResponseTest {
                                            Long viewCount,
                                            Long commentCount,
                                            LocalDate recruitEndDate,
+                                           String location,
                                            List<BoardPositionListResponseTest> positions,
                                            List<BoardTechStackListResponseTest> techStacks) {
         return new BoardListResponseTest(
@@ -56,6 +60,7 @@ public class BoardListResponseTest {
                 viewCount,
                 commentCount,
                 recruitEndDate,
+                location,
                 positions,
                 techStacks);
     }
@@ -65,7 +70,8 @@ public class BoardListResponseTest {
                                            String createdBy,
                                            Long viewCount,
                                            Long commentCount,
-                                           LocalDate recruitEndDate) {
-        return new BoardListResponseTest(boardId, title, createdBy, viewCount, commentCount, recruitEndDate, null, null);
+                                           LocalDate recruitEndDate,
+                                           String location) {
+        return new BoardListResponseTest(boardId, title, createdBy, viewCount, commentCount, recruitEndDate, location, null, null);
     }
 }

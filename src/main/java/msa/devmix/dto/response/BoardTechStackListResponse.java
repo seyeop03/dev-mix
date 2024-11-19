@@ -3,6 +3,7 @@ package msa.devmix.dto.response;
 import lombok.Data;
 import msa.devmix.repository.query.BoardTechStackQueryDto;
 
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -21,7 +22,7 @@ public class BoardTechStackListResponse {
     }
 
     public static List<BoardTechStackListResponse> from(List<BoardTechStackQueryDto> boardTechStackQueryDtos) {
-        return boardTechStackQueryDtos.stream()
+        return boardTechStackQueryDtos == null ? Collections.emptyList() : boardTechStackQueryDtos.stream()
                 .map(boardTechStackQueryDto -> BoardTechStackListResponse.of(
                         boardTechStackQueryDto.getBoardId(),
                         boardTechStackQueryDto.getTechStackImageUrl()))

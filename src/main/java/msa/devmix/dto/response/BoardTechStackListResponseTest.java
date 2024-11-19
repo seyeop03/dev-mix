@@ -23,7 +23,7 @@ public class BoardTechStackListResponseTest {
     public static List<BoardTechStackListResponseTest> from(List<BoardTechStack> boardTechStacks) {
         return boardTechStacks.stream()
                 .map(boardTechStack -> BoardTechStackListResponseTest.of(
-                        boardTechStack.getId(),
+                        boardTechStack.getBoard().getId(),
                         boardTechStack.getTechStack().getImageUrl()))
                 .toList();
     }

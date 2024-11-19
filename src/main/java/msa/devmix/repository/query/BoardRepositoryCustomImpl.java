@@ -17,7 +17,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
     public List<BoardQueryDto> findBoards(int pageNumber, int pageSize) {
 
         return em.createQuery("SELECT new msa.devmix.repository.query.BoardQueryDto(" +
-                "b.id, b.title, b.createdBy, b.viewCount,  b.commentCount, b.recruitEndDate)" +
+                "b.id, b.title, b.createdBy, b.viewCount, b.commentCount, b.recruitEndDate, b.location)" +
                 " FROM Board b", BoardQueryDto.class)
                 .setFirstResult((pageNumber - 1) * pageSize)
                 .setMaxResults(pageSize)

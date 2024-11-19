@@ -13,12 +13,7 @@ import msa.devmix.dto.response.*;
 import msa.devmix.exception.CustomException;
 import msa.devmix.exception.ErrorCode;
 import msa.devmix.repository.BoardRepository;
-import msa.devmix.service.ApplyService;
-import msa.devmix.service.BoardService;
-import msa.devmix.service.PositionService;
-import msa.devmix.service.TechStackService;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import msa.devmix.service.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -28,10 +23,10 @@ import java.util.Objects;
 
 
 @RestController
-@RequestMapping("/api/v1/boards")
+@RequestMapping("/api/v2/boards")
 @Slf4j
 @RequiredArgsConstructor
-public class BoardController {
+public class BoardV2Controller {
 
     private final BoardService boardService;
     private final BoardRepository boardRepository;
@@ -46,25 +41,24 @@ public class BoardController {
     @GetMapping("/{board-id}")
     public ResponseEntity<?> board(@PathVariable("board-id") @Min(1) Long boardId) {
 
+        BoardWithPositionTechStackDto dto = boardService.getBoard(boardId);
+        boardService.increaseViewCount(boardId);
+
         return ResponseEntity.ok()
-                .body(ResponseDto.success(BoardWithPositionTechStackResponse.from(boardService.getBoard(boardId))));
+                .body(ResponseDto.success(BoardWithPositionTechStackResponse.from(dto)));
     }
 
     //특정 페이지 게시글 리스트 조회
     @GetMapping
     public ResponseEntity<?> boards(@RequestParam(defaultValue = "1") int pageNumber, @RequestParam(defaultValue = "16") int pageSize) {
-
-        return ResponseEntity.ok().body(boardService.getBoards(pageNumber, pageSize).stream()
-                .map(BoardListResponse::from)
-                .toList());
+        return ResponseEntity.ok().body(ResponseDto.success(
+                boardService.getBoards(pageNumber, pageSize)
+                        .stream()
+                        .map(BoardListResponse::from)
+                        .toList()
+                )
+        );
     }
-
-    // 특정 페이지 게시글 리스트 조회(Test)
-    @GetMapping
-    public ResponseEntity<?> boards(@PageableDefault Pageable pageable) {
-        return ResponseEntity.ok().body(ResponseDto.success(boardService.findAllBoards(pageable)));
-    }
-
 
     //게시글 생성
     @PostMapping
@@ -206,32 +200,26 @@ public class BoardController {
                 .body(ResponseDto.success());
     }
 
-//    //특정 유저가 작성한 프로젝트별 지원자 대기(approve, reject) 리스트
-//    @GetMapping("/{board-id}/apply")
-//    public ResponseEntity<?> apply
-//
-//    //프로젝트 작성자의 지원 승인 및 거절
-//    @GetMapping("/{board-id}/apply")
-//    public ResponseEntity<?>
-
     /**
      * DB 에 존재하는 기술 스택, 포지션, 지역 정보
      */
     @GetMapping("/tech-stacks")
     public ResponseEntity<?> techstacks() {
 
-        return ResponseEntity.ok().body(ResponseDto.success(TechStackResponse.from(techStackService.getTechStacks())));
+        return ResponseEntity.ok()
+                .body(ResponseDto.success(TechStackResponse.from(techStackService.getTechStacks())));
     }
 
     @GetMapping("/positions")
     public ResponseEntity<?> positions() {
 
-        return ResponseEntity.ok().body(ResponseDto.success(PositionResponse.from(positionService.getPositions())));
+        return ResponseEntity.ok()
+                .body(ResponseDto.success(PositionResponse.from(positionService.getPositions())));
     }
 
     @GetMapping("/locations")
     public ResponseEntity<?> locations() {
-        return ResponseEntity.ok().body(Location.getAllLocations());
+        return ResponseEntity.ok()
+                .body(Location.getAllLocations());
     }
-
 }

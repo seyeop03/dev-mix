@@ -11,6 +11,4 @@ public class BoardPositionQueryDto {
     private String positionName; // 포지션 명
     private Long requiredCount; //모집 인원
     private Long currentCount; //현재 인원
-
-
 }

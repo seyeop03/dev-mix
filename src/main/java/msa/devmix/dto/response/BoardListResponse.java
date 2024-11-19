@@ -2,14 +2,16 @@ package msa.devmix.dto.response;
 
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import msa.devmix.domain.constant.Location;
 import msa.devmix.repository.query.BoardPositionQueryDto;
 import msa.devmix.repository.query.BoardQueryDto;
-import msa.devmix.repository.query.BoardTechStackQueryDto;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Data
 public class BoardListResponse {
 

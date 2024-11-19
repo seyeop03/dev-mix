@@ -28,14 +28,16 @@ public class Board extends BaseEntity {
     @Setter
     private User user;
 
-    private String title; //게시글 제목
-    private String content; //게시글 내용
-    private String imageUrl;//게시글 이미지 URL
+    private String title;               //게시글 제목
+    private String content;             //게시글 내용
+    private String imageUrl;            //게시글 이미지 URL
 
+    @Enumerated(EnumType.STRING)
+    @Setter
     private Location location;
 
-    private Long projectPeriod; //프로젝트 진행기간
-    private LocalDate recruitEndDate; //모집 마감일
+    private Long projectPeriod;         //프로젝트 진행기간
+    private LocalDate recruitEndDate;   //모집 마감일
 
     @Enumerated(EnumType.STRING)
     @Setter
@@ -109,5 +111,9 @@ public class Board extends BaseEntity {
 
     public void increaseCommentCount() {
         this.commentCount++;
+    }
+
+    public void decreaseCommentCount() {
+        this.commentCount--;
     }
 }

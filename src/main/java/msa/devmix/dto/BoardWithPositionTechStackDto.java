@@ -33,8 +33,8 @@ public class BoardWithPositionTechStackDto {
                                                    List<BoardTechStackDto> boardTechStackDtos) {
         return new BoardWithPositionTechStackDto(
                 boardDto.getBoardId(),
-                boardDto.getContent(),
                 boardDto.getTitle(),
+                boardDto.getContent(),
                 boardDto.getImageUrl(),
                 boardDto.getLocation(),
                 boardDto.getRecruitmentStatus(),

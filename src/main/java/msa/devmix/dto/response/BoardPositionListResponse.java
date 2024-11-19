@@ -1,11 +1,14 @@
 package msa.devmix.dto.response;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import msa.devmix.repository.query.BoardPositionQueryDto;
 
+import java.util.Collections;
 import java.util.List;
 
 @Data
+@Slf4j
 public class BoardPositionListResponse {
 
     private Long boardId;
@@ -25,7 +28,7 @@ public class BoardPositionListResponse {
     }
 
     public static List<BoardPositionListResponse> from(List<BoardPositionQueryDto> boardPositionQueryDtos) {
-        return boardPositionQueryDtos.stream()
+        return boardPositionQueryDtos == null ? Collections.emptyList() : boardPositionQueryDtos.stream()
                 .map(boardPositionQueryDto -> BoardPositionListResponse.of(
                         boardPositionQueryDto.getBoardId(),
                         boardPositionQueryDto.getPositionName(),

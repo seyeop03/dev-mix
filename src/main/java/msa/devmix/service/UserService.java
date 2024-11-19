@@ -16,5 +16,5 @@ public interface UserService {
     void checkNickname(String nickname);
     void saveUserProfile(UserWithPositionTechStackDto userWithPositionTechStackDto, MultipartFile profileImage) throws IOException;
 
-    List<UserBoardsDto> findUserBoards(Long userId, Pageable pageable);
+    List<UserBoardsDto> getUserBoards(Long userId, Pageable pageable);
 }

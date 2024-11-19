@@ -6,8 +6,6 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import msa.devmix.config.oauth.userinfo.UserPrincipal;
-import msa.devmix.domain.common.Position;
-import msa.devmix.domain.common.TechStack;
 import msa.devmix.dto.UserDto;
 import msa.devmix.dto.request.CheckNicknameRequest;
 import msa.devmix.dto.request.UserProfileRequest;
@@ -15,8 +13,6 @@ import msa.devmix.dto.response.ResponseDto;
 import msa.devmix.dto.response.UserBoardsResponse;
 import msa.devmix.exception.CustomException;
 import msa.devmix.exception.ErrorCode;
-import msa.devmix.repository.PositionRepository;
-import msa.devmix.repository.TechStackRepository;
 import msa.devmix.service.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -27,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -37,8 +32,6 @@ import java.util.Objects;
 public class UserController {
 
     private final UserService userService;
-    private final PositionRepository positionRepository;
-    private final TechStackRepository techStackRepository;
 
     /**
      * 로그인된 사용자 본인 정보 조회
@@ -66,20 +59,6 @@ public class UserController {
     public ResponseEntity<?> userProfile(@Valid @RequestPart("userProfile") UserProfileRequest userProfileRequest,
                                          @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
                                          @AuthenticationPrincipal UserPrincipal userPrincipal) throws IOException {
-        //positionList 검증
-        List<String> positionList = userProfileRequest.getPositionList();
-        List<Position> positions = positionRepository.findByPositionNameIn(userProfileRequest.getPositionList());
-        if (positionList != null && positions.size() != positionList.size()) {
-            throw new CustomException(ErrorCode.POSITION_NOT_FOUND);
-        }
-
-        //techStackList 검증
-        List<String> techStackList = userProfileRequest.getTechStackList();
-        List<TechStack> techStacks = techStackRepository.findByTechStackNameIn(userProfileRequest.getTechStackList());
-        if (techStackList != null && techStacks.size() != techStackList.size()) {
-            throw new CustomException(ErrorCode.TECH_STACK_NOT_FOUND);
-        }
-
 
         //User 프로필 설정 + (User 기술 스택 설정 + User 포지션 설정)
         userService.saveUserProfile(userProfileRequest.toDto(userPrincipal.getUser()), profileImage);
@@ -111,7 +90,7 @@ public class UserController {
 
         return ResponseEntity.ok()
                 .body(ResponseDto.success(
-                        userService.findUserBoards(userId, pageable)
+                        userService.getUserBoards(userId, pageable)
                                 .stream()
                                 .map(UserBoardsResponse::from)
                                 .toList()

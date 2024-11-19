@@ -26,6 +26,7 @@ public class UserProfileRequest {
 
     public UserWithPositionTechStackDto toDto(User user) {
 
+        //기술 스택 Dto
         List<TechStackDto> techStackDtos = new ArrayList<>();
         if (techStackList != null) {
             techStackDtos = techStackList.stream()

@@ -11,6 +11,7 @@ import msa.devmix.repository.RefreshTokenRepository;
 import msa.devmix.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -61,10 +62,12 @@ public class SecurityConfig {
                         UsernamePasswordAuthenticationFilter.class)
                 //3. 토큰 재발급 URL 은 인증 없이 접근하도록 설정. 나머지 API URL 은 인증 필요
                 .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/users/profile")).authenticated()
                         .requestMatchers(
                                 new AntPathRequestMatcher("/api/v1/tokens"),
-                                new AntPathRequestMatcher("/api/v1/boards/**", "GET"),
-                                new AntPathRequestMatcher("/api/v1/users/**", "GET")
+                                new AntPathRequestMatcher("/api/v1/boards/**", HttpMethod.GET.name()),
+                                new AntPathRequestMatcher("/api/v2/boards/**", HttpMethod.GET.name()),
+                                new AntPathRequestMatcher("/api/v1/users/*", HttpMethod.GET.name())
                         ).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/**")).authenticated()
                         .anyRequest().permitAll())
