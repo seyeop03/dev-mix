@@ -158,12 +158,11 @@ public class BoardServiceImpl implements BoardService {
 
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
-        if (board.getImageUrl() != null && ( boardDto.getImageUrl() == null || (boardImage != null && !boardImage.isEmpty()))) {
+        if (board.getImageUrl() != null && boardDto.getImageUrl() == null) {
             String imageUrl = extractImageUrl(board.getImageUrl());
             fileService.deleteFile(imageUrl);
             board.updateImageUrl(null);
         }
-
 
         if (boardImage != null && !boardImage.isEmpty()) {
             board.updateImageUrl(fileService.uploadFile(boardImage));
@@ -339,16 +338,6 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 //         board.increaseViewCount(); //Dirty checking
         boardRepository.increaseViewCount(boardId); //bulk insert
-    }
-
-
-    @Transactional
-    @Override
-    public void increaseCommentCount(Long boardId) {
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
-
-        boardRepository.increaseCommentCount(boardId);
     }
 
     /**

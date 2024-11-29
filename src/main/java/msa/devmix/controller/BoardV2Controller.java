@@ -54,7 +54,8 @@ public class BoardV2Controller {
 
     //특정 페이지 게시글 리스트 조회
     @GetMapping
-    public ResponseEntity<?> boards(@RequestParam(defaultValue = "1") int pageNumber, @RequestParam(defaultValue = "16") int pageSize) {
+    public ResponseEntity<?> boards(@RequestParam(defaultValue = "1") int pageNumber,
+                                    @RequestParam(defaultValue = "16") int pageSize) {
         return ResponseEntity.ok().body(ResponseDto.success(
                 boardService.getBoards(pageNumber, pageSize)
                         .stream()
@@ -168,8 +169,6 @@ public class BoardV2Controller {
     public ResponseEntity<?> postComment(@PathVariable("board-id") @Min(1) Long boardId,
                                          @Valid @RequestBody PostCommentRequest postCommentRequest,
                                          @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        boardService.increaseCommentCount(boardId);
-
         boardService.saveComment(
                 postCommentRequest.toDto(
                         boardId,
@@ -229,7 +228,7 @@ public class BoardV2Controller {
                 .body(Location.getAllLocations());
     }
 
-    //기술 스택 조회
+    //특정 포지션에 해당하는 기술 스택들 조회
     @GetMapping("/tech-stacks")
     public ResponseEntity<?> techStacks(@RequestParam(required = false) String positionName) {
         return ResponseEntity.ok()

@@ -18,7 +18,6 @@ public interface BoardService {
     void updateBoard(Long boardId, BoardDto boardDto, List<BoardPositionDto> boardPositionDtos, List<BoardTechStackDto> boardTechStackDtos, MultipartFile boardImage) throws IOException;
     void deleteBoard(Long boardId, User user);
     void increaseViewCount(Long boardId);
-    void increaseCommentCount(Long boardId);
     void putScrap(Long boardNumber, User user);
 
     List<CommentDto> getComments(Long boardId);
