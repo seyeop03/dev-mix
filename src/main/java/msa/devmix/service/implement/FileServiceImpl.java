@@ -47,6 +47,14 @@ public class FileServiceImpl implements FileService {
         return fileUrl + storeFilename;
     }
 
+    @Override
+    public void deleteFile(String fileName) {
+
+        // C:/~~/uuid.png
+        File file = new File(getFullPath(fileName));
+        if (file.exists()) file.delete();
+    }
+
     private String createStoreFilename(String originalFilename) {
         String ext = extractExt(originalFilename);
         String uuid = UUID.randomUUID().toString();
