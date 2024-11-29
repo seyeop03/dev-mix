@@ -158,12 +158,11 @@ public class BoardServiceImpl implements BoardService {
 
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
-        if (board.getImageUrl() != null && ( boardDto.getImageUrl() == null || (boardImage != null && !boardImage.isEmpty()))) {
+        if (board.getImageUrl() != null && boardDto.getImageUrl() == null) {
             String imageUrl = extractImageUrl(board.getImageUrl());
             fileService.deleteFile(imageUrl);
             board.updateImageUrl(null);
         }
-
 
         if (boardImage != null && !boardImage.isEmpty()) {
             board.updateImageUrl(fileService.uploadFile(boardImage));
