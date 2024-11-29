@@ -9,12 +9,15 @@ import msa.devmix.config.oauth.userinfo.UserPrincipal;
 import msa.devmix.dto.UserDto;
 import msa.devmix.dto.request.CheckNicknameRequest;
 import msa.devmix.dto.request.UserProfileRequest;
+import msa.devmix.dto.response.ApplyResponse;
+import msa.devmix.dto.response.CommentsResponse;
 import msa.devmix.dto.response.ResponseDto;
 import msa.devmix.dto.response.UserBoardsResponse;
 import msa.devmix.exception.CustomException;
 import msa.devmix.exception.ErrorCode;
 import msa.devmix.service.UserService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -96,5 +99,51 @@ public class UserController {
                                 .toList()
                         )
                 );
+    }
+
+    /**
+     *  본인 댓글 조회
+     */
+    @GetMapping("/{user-id}/comments")
+    public ResponseEntity<?> getUserComments(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                             @PathVariable("user-id") @Min(1) Long userId,
+                                             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        if (!Objects.equals(userPrincipal.getUser().getId(), userId)) {
+            throw new CustomException(ErrorCode.AUTHORIZATION_FAILED);
+        }
+
+        return ResponseEntity.ok().body(ResponseDto.success(
+                userService.getUserComments(userId, pageable).stream()
+                        .map(CommentsResponse::from)
+                        .toList()));
+    }
+
+    /**
+     * 본인 지원 프로젝트 목록
+     */
+    @GetMapping("/{user-id}/applies")
+    public ResponseEntity<?> getUserApplies(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                            @PathVariable("user-id") @Min(1) Long userId) {
+        if (!Objects.equals(userPrincipal.getUser().getId(), userId)) {
+            throw new CustomException(ErrorCode.AUTHORIZATION_FAILED);
+        }
+
+        return ResponseEntity
+                .ok()
+                .body(ResponseDto.success(userService.getUserApplies(userPrincipal.getUser()).stream()
+                        .map(ApplyResponse::from).toList()));
+    }
+
+    /**
+     * 본인 작성 게시글 지원자 목록
+     */
+    @GetMapping("/{user-id}/applicants")
+    public ResponseEntity<?> getApplicants(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                           @PathVariable("user-id") @Min(1) Long userId) {
+        if (!Objects.equals(userPrincipal.getUser().getId(), userId)) {
+            throw new CustomException(ErrorCode.AUTHORIZATION_FAILED);
+        }
+
+        return ResponseEntity.ok().body(ResponseDto.success(userService.getApplicants(userId)));
     }
 }
