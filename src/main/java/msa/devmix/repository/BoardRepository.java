@@ -20,4 +20,8 @@ public interface BoardRepository extends JpaRepository<Board, Long>, BoardReposi
     @Modifying
     @Query("UPDATE Board b SET b.viewCount = b.viewCount + 1 WHERE b.id = :boardId")
     void increaseViewCount(@Param("boardId") Long boardId);
+
+    @Modifying
+    @Query("UPDATE Board b SET b.commentCount = b.commentCount + 1 WHERE b.id = :boardId")
+    void increaseCommentCount(@Param("boardId") Long boardId);
 }

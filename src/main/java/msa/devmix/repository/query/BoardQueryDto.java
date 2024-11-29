@@ -18,6 +18,7 @@ public class BoardQueryDto {
     private Long commentCount;
     private LocalDate recruitEndDate;
     private Location location;
+    private boolean bookmarked;
 
     private List<BoardPositionQueryDto> positions;
     private List<BoardTechStackQueryDto> techStacks;

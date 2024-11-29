@@ -13,6 +13,7 @@ import msa.devmix.dto.response.*;
 import msa.devmix.exception.CustomException;
 import msa.devmix.exception.ErrorCode;
 import msa.devmix.repository.BoardRepository;
+import msa.devmix.repository.query.BoardQueryDto;
 import msa.devmix.service.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +62,17 @@ public class BoardV2Controller {
                         .toList()
                 )
         );
+    }
+
+    //특정 페이지 게시글 리스트 조회 + 스크랩
+    @GetMapping("/scrap-list")
+    public ResponseEntity<?> boards(@RequestParam(defaultValue = "1") int pageNumber,
+                                    @RequestParam(defaultValue = "16") int pageSize,
+                                    @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        List<BoardQueryDto> bookmarked = boardService.getBookMarkedBoards(userPrincipal.getUser(), pageNumber, pageSize);
+
+        return ResponseEntity.ok().body(ResponseDto.success(bookmarked));
     }
 
     //게시글 생성
@@ -156,6 +168,8 @@ public class BoardV2Controller {
     public ResponseEntity<?> postComment(@PathVariable("board-id") @Min(1) Long boardId,
                                          @Valid @RequestBody PostCommentRequest postCommentRequest,
                                          @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        boardService.increaseCommentCount(boardId);
+
         boardService.saveComment(
                 postCommentRequest.toDto(
                         boardId,
