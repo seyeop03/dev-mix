@@ -340,16 +340,6 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.increaseViewCount(boardId); //bulk insert
     }
 
-
-    @Transactional
-    @Override
-    public void increaseCommentCount(Long boardId) {
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
-
-        boardRepository.increaseCommentCount(boardId);
-    }
-
     /**
      * 스크랩 기능
      */
