@@ -21,6 +21,7 @@ import msa.devmix.repository.query.BoardQueryDto;
 import msa.devmix.repository.query.BoardTechStackQueryDto;
 import msa.devmix.service.BoardService;
 import msa.devmix.service.NotificationService;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -272,7 +273,6 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.increaseViewCount(boardId); //bulk insert
     }
 
-
     /**
      * 스크랩 기능
      */
@@ -333,6 +333,7 @@ public class BoardServiceImpl implements BoardService {
         board.decreaseCommentCount();
     }
 
+    //N+1 이슈 해결하기 전 로직
     @Override
     public List<BoardListResponseTest> findAllBoards(Pageable pageable) {
         Page<Board> boards = boardRepository.findAll(pageable);

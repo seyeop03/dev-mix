@@ -41,16 +41,16 @@ public class ShortUrl {
     public static String generateShortUrlKey() {
         String base56Characters = "23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz";
         Random random = new Random();
-        StringBuilder shortenUrlKey = new StringBuilder();
+        StringBuilder shortUrlKey = new StringBuilder();
 
         for (int count = 0; count < 8; count++) {
             int base56CharactersIndex = random.nextInt(0, base56Characters.length());
             char base56Character = base56Characters.charAt(base56CharactersIndex);
 
-            shortenUrlKey.append(base56Character);
+            shortUrlKey.append(base56Character);
         }
 
-        return shortenUrlKey.toString();
+        return shortUrlKey.toString();
     }
 
 }

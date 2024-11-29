@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface TechStackService {
 
-    List<TechStackDto> getTechStacks();
+    List<TechStackDto> getTechStacksViaPositionName(String positionName);
 }
