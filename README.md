@@ -20,6 +20,7 @@
 - **IDE**: IntelliJ, Visual Studio Code
 - **Back-End**
   - Spring Boot 3.3.4
+  - Spring Boot Actuator
   - Spring Data JPA 3.3.4
   - Spring Security 6.3.3
   - Spring OAuth2 Client
@@ -33,7 +34,6 @@
   - Docker
   - AWS
 - **Monitoring**
-  - Spring Boot Actuator
   - Prometheus
   - Grafana
 
