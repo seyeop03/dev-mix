@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import msa.devmix.domain.common.BaseTimeEntity;
 import msa.devmix.domain.constant.ParticipationStatus;
 import msa.devmix.domain.user.User;
 
@@ -15,7 +16,7 @@ import msa.devmix.domain.user.User;
 @AllArgsConstructor
 @Entity
 @Getter
-public class Apply {
+public class Apply extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "apply_id")

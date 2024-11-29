@@ -2,20 +2,22 @@ package msa.devmix.service.implement;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import msa.devmix.domain.board.Apply;
 import msa.devmix.domain.board.Board;
+import msa.devmix.domain.board.BoardPosition;
+import msa.devmix.domain.board.Comment;
 import msa.devmix.domain.common.Position;
 import msa.devmix.domain.common.TechStack;
 import msa.devmix.domain.user.User;
 import msa.devmix.domain.user.UserPosition;
 import msa.devmix.domain.user.UserTechStack;
-import msa.devmix.dto.TechStackDto;
-import msa.devmix.dto.UserBoardsDto;
-import msa.devmix.dto.UserWithPositionTechStackDto;
+import msa.devmix.dto.*;
 import msa.devmix.exception.CustomException;
 import msa.devmix.exception.ErrorCode;
 import msa.devmix.repository.*;
 import msa.devmix.service.FileService;
 import msa.devmix.service.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +43,10 @@ public class UserServiceImpl implements UserService {
     private final FileService fileService;
     private final PositionRepository positionRepository;
     private final TechStackRepository techStackRepository;
+    private final CommentRepository commentRepository;
+    private final ApplyRepository applyRepository;
+    private final BoardPositionRepository boardPositionRepository;
+    private final ScrapRepository scrapRepository;
 
     //유저 ID로 유저 엔티티 조회
     @Override
@@ -191,5 +197,42 @@ public class UserServiceImpl implements UserService {
 
         userTechStackRepository.deleteAllInBatch(removeUserTechStacks);
         userTechStackRepository.saveAll(updateUserTechStacks);
+    }
+
+    @Override
+    public List<CommentDto> getUserComments(Long userId, Pageable pageable) {
+
+        Page<Comment> comments = commentRepository.findByUserId(userId, pageable)
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
+
+        return comments.stream()
+                .map(CommentDto::from)
+                .toList();
+    }
+
+    @Override
+    public List<ApplyDto> getUserApplies(User user) {
+
+        List<Apply> applies = applyRepository.findByUser(user)
+                .orElseThrow(() -> new CustomException(ErrorCode.APPLY_NOT_FOUND));
+
+        return applies.stream()
+                .map(ApplyDto::from)
+                .toList();
+    }
+
+    @Override
+    public List<ApplicantsDto> getApplicants(Long userId) {
+        // 유저 작성 게시글 조회
+        List<Board> boards = boardRepository.findByUserId(userId, null)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        // 게시글로 boardPosition 조회
+        List<BoardPosition> boardPositions = boardPositionRepository.findByBoardIn(boards);
+
+        // boardPosition 으로 apply 조회
+        List<Apply> applies = applyRepository.findByBoardPositionIn(boardPositions);
+
+        return applies.stream().map(ApplicantsDto::from).toList();
     }
 }

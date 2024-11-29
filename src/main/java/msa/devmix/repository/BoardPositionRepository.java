@@ -1,5 +1,6 @@
 package msa.devmix.repository;
 
+import msa.devmix.domain.board.Board;
 import msa.devmix.domain.board.BoardPosition;
 import msa.devmix.domain.common.Position;
 import msa.devmix.domain.user.UserPosition;
@@ -16,4 +17,6 @@ public interface BoardPositionRepository extends JpaRepository<BoardPosition, Lo
     void deleteAllByBoardId(Long boardId);
 
     Optional<BoardPosition> findByBoardIdAndPosition(Long boardId, Position position);
+
+    List<BoardPosition> findByBoardIn(List<Board> boards);
 }
