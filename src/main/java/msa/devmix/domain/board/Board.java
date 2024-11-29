@@ -116,4 +116,8 @@ public class Board extends BaseEntity {
     public void decreaseCommentCount() {
         this.commentCount--;
     }
+
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

@@ -14,10 +14,13 @@ import msa.devmix.exception.CustomException;
 import msa.devmix.exception.ErrorCode;
 import msa.devmix.repository.BoardRepository;
 import msa.devmix.service.*;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,9 +64,10 @@ public class BoardV2Controller {
     }
 
     //게시글 생성
-    @PostMapping
-    public ResponseEntity<?> postBoard(@Valid @RequestBody PostBoardRequest postBoardRequest,
-                                       @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> postBoard(@Valid @RequestPart(value = "postBoardRequest") PostBoardRequest postBoardRequest,
+                                       @AuthenticationPrincipal UserPrincipal userPrincipal,
+                                       @RequestPart(value = "boardImage", required = false) MultipartFile boardImage) throws IOException {
 
         BoardDto boardDto = postBoardRequest.toDto(UserDto.from(userPrincipal.getUser()));
 
@@ -77,16 +81,17 @@ public class BoardV2Controller {
                 .map(BoardTechStackRequest::toDto)
                 .toList();
 
-        boardService.saveBoard(boardDto, boardPositionDtos, boardTechStackDtos);
+        boardService.saveBoard(boardDto, boardPositionDtos, boardTechStackDtos, boardImage);
 
         return ResponseEntity.ok().body(ResponseDto.success());
     }
 
     //게시글 수정
-    @PutMapping("/{board-id}")
+    @PutMapping(value = "/{board-id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> updateBoard(@PathVariable("board-id") @Min(1) Long boardId,
-                                         @Valid @RequestBody UpdateBoardRequest updateBoardRequest,
-                                         @AuthenticationPrincipal UserPrincipal userPrincipal) {
+                                         @Valid @RequestPart(value = "updateBoardRequest") UpdateBoardRequest updateBoardRequest,
+                                         @RequestPart(value = "boardImage", required = false) MultipartFile boardImage,
+                                         @AuthenticationPrincipal UserPrincipal userPrincipal) throws IOException {
 
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
@@ -102,7 +107,7 @@ public class BoardV2Controller {
                     .stream()
                     .map(BoardTechStackRequest::toDto)
                     .toList();
-            boardService.updateBoard(boardId, boardDto, boardPositionDtos, boardTechStackDtos);
+            boardService.updateBoard(boardId, boardDto, boardPositionDtos, boardTechStackDtos, boardImage);
         } else {
             throw new CustomException(ErrorCode.PERMISSION_DENIED);
         }

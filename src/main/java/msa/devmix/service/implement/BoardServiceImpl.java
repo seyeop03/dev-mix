@@ -20,12 +20,15 @@ import msa.devmix.repository.query.BoardPositionQueryDto;
 import msa.devmix.repository.query.BoardQueryDto;
 import msa.devmix.repository.query.BoardTechStackQueryDto;
 import msa.devmix.service.BoardService;
+import msa.devmix.service.FileService;
 import msa.devmix.service.NotificationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,6 +51,7 @@ public class BoardServiceImpl implements BoardService {
     private final ApplyRepository applyRepository;
     private final ScrapRepository scrapRepository;
     private final NotificationService notificationService;
+    private final FileService fileService;
 
 
     /**
@@ -80,12 +84,17 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public void saveBoard(BoardDto boardDto,
                           List<BoardPositionDto> boardPositionDtos,
-                          List<BoardTechStackDto> boardTechStackDtos) {
+                          List<BoardTechStackDto> boardTechStackDtos,
+                          MultipartFile boardImage) throws IOException {
 
         Board board = boardDto.toEntity();
         board.setRecruitmentStatus(RecruitmentStatus.RECRUITING);
         board.setUser(userRepository.findById(boardDto.getUserDto().getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND)));
+
+        String boardImageUrl = fileService.uploadFile(boardImage);
+
+        board.updateImageUrl(boardImageUrl);
         board.setViewCount(0L);
         board.setCommentCount(0L);
 
@@ -94,7 +103,7 @@ public class BoardServiceImpl implements BoardService {
         // boardPosition 저장
         List<String> positionNames = boardPositionDtos.stream()
                 .map(BoardPositionDto::getPositionName)
-                        .toList();
+                .toList();
 
         List<Position> existingPositions = positionRepository.findByPositionNameIn(positionNames);
 
@@ -131,8 +140,8 @@ public class BoardServiceImpl implements BoardService {
         boardTechStackDtos.stream()
                 .map(boardTechStackDto
                         -> boardTechStackDto.toEntity(
-                                board,
-                                techStackRepository.findByTechStackName(boardTechStackDto.getTechStackName())))
+                        board,
+                        techStackRepository.findByTechStackName(boardTechStackDto.getTechStackName())))
                 .forEach(boardTechStackRepository::save);
 
     }
@@ -143,9 +152,21 @@ public class BoardServiceImpl implements BoardService {
     public void updateBoard(Long boardId,
                             BoardDto boardDto,
                             List<BoardPositionDto> boardPositionDtos,
-                            List<BoardTechStackDto> boardTechStackDtos) {
+                            List<BoardTechStackDto> boardTechStackDtos,
+                            MultipartFile boardImage) throws IOException {
 
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        if (board.getImageUrl() != null && ( boardDto.getImageUrl() == null || (boardImage != null && !boardImage.isEmpty()))) {
+            String imageUrl = extractImageUrl(board.getImageUrl());
+            fileService.deleteFile(imageUrl);
+            board.updateImageUrl(null);
+        }
+
+
+        if (boardImage != null && !boardImage.isEmpty()) {
+            board.updateImageUrl(fileService.uploadFile(boardImage));
+        }
 
         board.update(boardDto);
 
@@ -153,7 +174,7 @@ public class BoardServiceImpl implements BoardService {
         // 현재 게시판의 기존 `BoardPosition` 엔티티 목록 가져오기
         List<BoardPosition> existingBoardPositions = boardPositionRepository.findByBoardId(boardId);
 
-       // 새로운 요청 데이터에 맞춰 `BoardPosition` 업데이트 또는 삽입
+        // 새로운 요청 데이터에 맞춰 `BoardPosition` 업데이트 또는 삽입
         for (BoardPositionDto dto : boardPositionDtos) {
             Position position = positionRepository.findByPositionName(dto.getPositionName())
                     .orElseThrow(() -> new CustomException(ErrorCode.POSITION_NOT_FOUND));
@@ -210,6 +231,10 @@ public class BoardServiceImpl implements BoardService {
         boardTechStackRepository.deleteAll(deleteBoardTechStack);
 
 
+    }
+
+    private String extractImageUrl(String imageUrl) {
+        return imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
     }
 
     //게시글 삭제
