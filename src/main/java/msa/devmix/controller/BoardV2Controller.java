@@ -222,11 +222,22 @@ public class BoardV2Controller {
     /**
      * DB 에 존재하는 기술 스택, 포지션, 지역 정보
      */
-    @GetMapping("/tech-stacks")
-    public ResponseEntity<?> techstacks() {
-
+    //지역 정보 조회
+    @GetMapping("/locations")
+    public ResponseEntity<?> locations() {
         return ResponseEntity.ok()
-                .body(ResponseDto.success(TechStackResponse.from(techStackService.getTechStacks())));
+                .body(Location.getAllLocations());
+    }
+
+    //기술 스택 조회
+    @GetMapping("/tech-stacks")
+    public ResponseEntity<?> techStacks(@RequestParam(required = false) String positionName) {
+        return ResponseEntity.ok()
+                .body(ResponseDto.success(techStackService.getTechStacksViaPositionName(positionName)
+                        .stream()
+                        .map(TechStackResponse::from)
+                        .toList())
+                );
     }
 
     @GetMapping("/positions")
@@ -236,9 +247,5 @@ public class BoardV2Controller {
                 .body(ResponseDto.success(PositionResponse.from(positionService.getPositions())));
     }
 
-    @GetMapping("/locations")
-    public ResponseEntity<?> locations() {
-        return ResponseEntity.ok()
-                .body(Location.getAllLocations());
-    }
+
 }

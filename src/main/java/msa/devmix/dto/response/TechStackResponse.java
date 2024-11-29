@@ -19,9 +19,7 @@ public class TechStackResponse {
         return new TechStackResponse(techStackName, imageUrl);
     }
 
-    public static List<TechStackResponse> from(List<TechStackDto> techStackDtos) {
-        return techStackDtos.stream()
-                .map(techStackDto -> TechStackResponse.of(techStackDto.getTechStackName(), techStackDto.getImageUrl()))
-                .toList();
+    public static TechStackResponse from(TechStackDto techStackDto) {
+        return TechStackResponse.of(techStackDto.getTechStackName(), techStackDto.getImageUrl());
     }
 }

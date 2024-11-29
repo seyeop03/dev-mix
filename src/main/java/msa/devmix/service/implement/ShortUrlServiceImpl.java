@@ -10,11 +10,13 @@ import msa.devmix.exception.ErrorCode;
 import msa.devmix.repository.ShortUrlRepository;
 import msa.devmix.service.ShortUrlService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ShortUrlServiceImpl implements ShortUrlService {
 
     private static final int MAX_RETRY_COUNT = 5;
@@ -22,6 +24,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     private final ShortUrlRepository shortUrlRepository;
 
     @Override
+    @Transactional
     public ShortUrlResponse generateShortUrl(CreateShortUrlRequest createShortUrlRequest) {
         String originalUrl = createShortUrlRequest.getOriginalUrl();
         String ShortUrlKey = getUniqueShortUrlKey();
