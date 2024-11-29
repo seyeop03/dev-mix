@@ -13,10 +13,12 @@ import java.util.List;
 public interface BoardService {
     BoardWithPositionTechStackDto getBoard(Long boardId);
     List<BoardQueryDto> getBoards(int pageNumber, int pageSize);
+    List<BoardQueryDto> getBookMarkedBoards(User user, int pageNumber, int pageSize);
     void saveBoard(BoardDto boardDto, List<BoardPositionDto> boardPositionDtos, List<BoardTechStackDto> boardTechStackDtos, MultipartFile boardImage) throws IOException;
     void updateBoard(Long boardId, BoardDto boardDto, List<BoardPositionDto> boardPositionDtos, List<BoardTechStackDto> boardTechStackDtos, MultipartFile boardImage) throws IOException;
     void deleteBoard(Long boardId, User user);
     void increaseViewCount(Long boardId);
+    void increaseCommentCount(Long boardId);
     void putScrap(Long boardNumber, User user);
 
     List<CommentDto> getComments(Long boardId);

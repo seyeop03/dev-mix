@@ -285,6 +285,49 @@ public class BoardServiceImpl implements BoardService {
         return boards;
     }
 
+    @Override
+    public List<BoardQueryDto> getBookMarkedBoards(User user, int pageNumber, int pageSize) {
+        List<BoardQueryDto> boards = boardRepository.findBoards(pageNumber, pageSize);
+
+//        boards.forEach(boardQueryDto ->
+//        {
+//            if (scrapRepository.findByBoardId(boardQueryDto.getBoardId()) == null) {
+//                boardQueryDto.setBookmarked(false);
+//            } else {
+//                boardQueryDto.setBookmarked(true);
+//            }
+//        });
+
+        // 현재 페이지 boardId들
+        List<Long> boardIds = boards.stream()
+                .map(BoardQueryDto::getBoardId)
+                .toList();
+
+        List<Scrap> scraps = scrapRepository.findByBoardIdInAndUser(boardIds, user);
+
+        Map<Long, Scrap> scrapMap = scraps.stream().collect(Collectors.toMap(scrap -> scrap.getBoard().getId(), scrap -> scrap));
+
+        boards.forEach(boardQueryDto -> {
+            if (scrapMap.get(boardQueryDto.getBoardId()) == null) {
+                boardQueryDto.setBookmarked(false);
+            } else {
+                boardQueryDto.setBookmarked(true);
+            }
+        });
+
+        // boardPosition 가져오기
+        Map<Long, List<BoardPositionQueryDto>> boardPositionQueryDtos = boardRepository.findBoardPositionQueryDtos(boardIds);
+
+        boards.forEach(board -> board.setPositions(boardPositionQueryDtos.get(board.getBoardId())));
+
+        // boardTechStack 가져오기
+        Map<Long, List<BoardTechStackQueryDto>> boardTechStackQueryDtos = boardRepository.findBoardTechStackQueryDtos(boardIds);
+
+        boards.forEach(board -> board.setTechStacks(boardTechStackQueryDtos.get(board.getBoardId())));
+
+        return boards;
+    }
+
     //게시글 조회수 증가
     /* 게시글을 조회할 때마다 조회수 증가 로직이 함께 실행되면 그 두 기능이 강하게 결합되므로,
         조회수 증가를 독립된 API 로 분리하면 유지보수성이 높아짐 */
@@ -295,6 +338,15 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 //         board.increaseViewCount(); //Dirty checking
         boardRepository.increaseViewCount(boardId); //bulk insert
+    }
+
+    @Transactional
+    @Override
+    public void increaseCommentCount(Long boardId) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+
+        boardRepository.increaseCommentCount(boardId);
     }
 
 
